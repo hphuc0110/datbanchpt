@@ -2,7 +2,6 @@
 
 import { FormEvent, useState } from "react";
 import { MapPin, Phone, Send } from "lucide-react";
-import { createClient, hasSupabaseConfig } from "@/lib/supabase/client";
 import { SITE } from "@/data/content";
 import { Button } from "@/components/ui/Button";
 
@@ -24,30 +23,20 @@ export function ContactForm() {
     setMessage(null);
 
     try {
-      if (!hasSupabaseConfig()) {
-        await new Promise((r) => setTimeout(r, 500));
-        setMessage({
-          type: "ok",
-          text: "Đã gửi (demo). Cấu hình Supabase để lưu tin nhắn thật.",
-        });
-        setForm({
-          full_name: "",
-          contact: "",
-          subject: "Câu hỏi / Góp ý chung",
-          message: "",
-        });
-        return;
-      }
-
-      const supabase = createClient();
-      const { error } = await supabase.from("contact_messages").insert({
-        full_name: form.full_name,
-        contact: form.contact,
-        subject: form.subject,
-        message: form.message,
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
       });
-      if (error) throw error;
-      setMessage({ type: "ok", text: "Cảm ơn bạn! Chúng tôi đã nhận được góp ý." });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || "Gửi thất bại.");
+
+      setMessage({
+        type: "ok",
+        text: json.demo
+          ? "Đã gửi (demo). Cấu hình Supabase trên Vercel để lưu tin nhắn thật."
+          : "Cảm ơn bạn! Chúng tôi đã nhận được góp ý.",
+      });
       setForm({
         full_name: "",
         contact: "",
@@ -116,7 +105,7 @@ export function ContactForm() {
           <input
             required
             className="form-input mt-2"
-            placeholder="Nguyễn Văn A"
+            placeholder=""
             value={form.full_name}
             onChange={(e) => setForm({ ...form, full_name: e.target.value })}
           />
@@ -127,7 +116,7 @@ export function ContactForm() {
           <input
             required
             className="form-input mt-2"
-            placeholder="email@example.com"
+            placeholder=""
             value={form.contact}
             onChange={(e) => setForm({ ...form, contact: e.target.value })}
           />

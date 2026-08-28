@@ -1,7 +1,6 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { createClient, hasSupabaseConfig } from "@/lib/supabase/client";
 import {
   type BookingFieldErrors,
   hasBookingErrors,
@@ -70,33 +69,19 @@ export function BookingForm({ variant = "overlay" }: Props) {
     setLoading(true);
 
     try {
-      if (!hasSupabaseConfig()) {
-        await new Promise((r) => setTimeout(r, 600));
-        setMessage({
-          type: "ok",
-          text: "Đã ghi nhận yêu cầu (chế độ demo — hãy cấu hình Supabase để lưu thật).",
-        });
-        setForm(initial);
-        return;
-      }
-
-      const supabase = createClient();
-      const { error } = await supabase.from("bookings").insert({
-        full_name: form.full_name,
-        phone: form.phone,
-        email: form.email || null,
-        booking_date: form.booking_date,
-        booking_time: form.booking_time,
-        guest_count: form.guest_count,
-        preferred_area: form.preferred_area,
-        special_requests: form.special_requests || null,
+      const res = await fetch("/api/bookings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
       });
-
-      if (error) throw error;
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || "Gửi thất bại.");
 
       setMessage({
         type: "ok",
-        text: "Gửi yêu cầu đặt bàn thành công! Nhà hàng sẽ liên hệ xác nhận sớm.",
+        text: json.demo
+          ? "Đã ghi nhận yêu cầu (demo). Cấu hình Supabase trên Vercel để lưu đơn thật."
+          : "Gửi yêu cầu đặt bàn thành công! Nhà hàng sẽ liên hệ xác nhận sớm.",
       });
       setForm(initial);
       setFieldErrors({});
@@ -126,7 +111,7 @@ export function BookingForm({ variant = "overlay" }: Props) {
             value={form.full_name}
             onChange={onChange}
             className={isOverlay ? "underline-input" : "form-input"}
-            placeholder="Nguyễn Văn A"
+            placeholder=""
             aria-invalid={fieldErrors.full_name ? true : undefined}
           />
         </Field>
@@ -150,7 +135,7 @@ export function BookingForm({ variant = "overlay" }: Props) {
             value={form.email}
             onChange={onChange}
             className={isOverlay ? "underline-input" : "form-input"}
-            placeholder="email@example.com"
+            placeholder=""
             aria-invalid={fieldErrors.email ? true : undefined}
           />
         </Field>

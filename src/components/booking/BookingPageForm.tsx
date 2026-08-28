@@ -2,7 +2,6 @@
 
 import { FormEvent, useState } from "react";
 import { MapPin, Phone, Shield } from "lucide-react";
-import { createClient, hasSupabaseConfig } from "@/lib/supabase/client";
 import {
   type BookingFieldErrors,
   hasBookingErrors,
@@ -67,32 +66,19 @@ export function BookingPageForm() {
     setLoading(true);
 
     try {
-      if (!hasSupabaseConfig()) {
-        await new Promise((r) => setTimeout(r, 600));
-        setMessage({
-          type: "ok",
-          text: "Đã ghi nhận yêu cầu (demo). Cấu hình Supabase để lưu đơn thật.",
-        });
-        setForm(initial);
-        return;
-      }
-
-      const supabase = createClient();
-      const { error } = await supabase.from("bookings").insert({
-        full_name: form.full_name,
-        phone: form.phone,
-        email: form.email || null,
-        booking_date: form.booking_date,
-        booking_time: form.booking_time,
-        guest_count: form.guest_count,
-        preferred_area: form.preferred_area,
-        special_requests: form.special_requests || null,
+      const res = await fetch("/api/bookings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
       });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || "Gửi thất bại.");
 
-      if (error) throw error;
       setMessage({
         type: "ok",
-        text: "Gửi yêu cầu đặt bàn thành công! Chúng tôi sẽ gọi xác nhận sớm.",
+        text: json.demo
+          ? "Đã ghi nhận yêu cầu (demo). Cấu hình Supabase trên Vercel để lưu đơn thật."
+          : "Gửi yêu cầu đặt bàn thành công! Chúng tôi sẽ gọi xác nhận sớm.",
       });
       setForm(initial);
       setFieldErrors({});
@@ -127,7 +113,7 @@ export function BookingPageForm() {
               className="form-input mt-2"
               value={form.full_name}
               onChange={(e) => updateField("full_name", e.target.value)}
-              placeholder="Nguyễn Văn A"
+              placeholder=""
               aria-invalid={fieldErrors.full_name ? true : undefined}
             />
           </Field>
@@ -136,7 +122,7 @@ export function BookingPageForm() {
               className="form-input mt-2"
               value={form.phone}
               onChange={(e) => updateField("phone", e.target.value)}
-              placeholder="09xx xxx xxx"
+              placeholder=""
               aria-invalid={fieldErrors.phone ? true : undefined}
             />
           </Field>
@@ -152,7 +138,7 @@ export function BookingPageForm() {
             className="form-input mt-2"
             value={form.email}
             onChange={(e) => updateField("email", e.target.value)}
-            placeholder="email@example.com"
+            placeholder=""
             aria-invalid={fieldErrors.email ? true : undefined}
           />
         </Field>
