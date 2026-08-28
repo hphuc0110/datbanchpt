@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
-  <circle cx="60" cy="60" r="60" fill="#111"/>
-  <circle cx="60" cy="60" r="52" fill="#fff"/>
-  <path d="M35 78V42h12l10 22 10-22h12v36h-9V55l-9 20h-8l-9-20v23H35z" fill="#c4202b"/>
-  <path d="M28 82h64" stroke="#c4202b" stroke-width="3"/>
-  <text x="60" y="98" text-anchor="middle" font-family="Arial,sans-serif" font-size="7" font-weight="700" fill="#111" letter-spacing="1">CUNG H�</text>
-</svg>

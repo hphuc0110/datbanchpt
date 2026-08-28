@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import { SectionLabel } from "@/components/ui/SectionLabel";
-import { SIGNATURE_DISHES } from "@/data/content";
+import { SIGNATURE_DISHES, MENUS } from "@/data/content";
 
 export function SignatureSection() {
   const featured = SIGNATURE_DISHES.find((d) => d.featured)!;
@@ -68,7 +68,12 @@ export function SignatureSection() {
         </div>
 
         <div className="mt-12 text-center">
-          <Button href="/menu#signature" variant="cream">
+          <Button
+            href={MENUS.signature}
+            target="_blank"
+            rel="noopener noreferrer"
+            variant="cream"
+          >
             Xem Menu Signature
           </Button>
         </div>

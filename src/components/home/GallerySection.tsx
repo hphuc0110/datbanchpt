@@ -13,26 +13,19 @@ export function GallerySection() {
         className="object-cover"
         sizes="100vw"
       />
-      <div className="absolute inset-0 bg-brand-charcoal/80" />
+      <div className="absolute inset-0 " />
 
       <div className="relative z-10 mx-auto grid max-w-7xl items-center gap-10 px-4 lg:grid-cols-2 lg:gap-14 lg:px-8">
-        <div className="grid grid-cols-3 gap-2 sm:gap-3">
-          {IMAGES.gallery.map((src, i) => (
-            <div
-              key={src}
-              className={`relative overflow-hidden ${
-                i === 0 || i === 5 ? "col-span-2 aspect-[2/1]" : "aspect-square"
-              }`}
-            >
-              <Image
-                src={src}
-                alt={`Không gian nhà hàng ${i + 1}`}
-                fill
-                className="object-cover"
-                sizes="(max-width: 1024px) 33vw, 20vw"
-              />
-            </div>
-          ))}
+        <div className="relative w-full">
+          <Image
+            src={IMAGES.galleryFrame}
+            alt="Không gian nhà hàng Cung Hỷ Phát Tài"
+            width={1200}
+            height={900}
+            className="h-auto w-full object-contain"
+            sizes="(max-width: 1024px) 100vw, 50vw"
+            priority
+          />
         </div>
 
         <div className="text-white">

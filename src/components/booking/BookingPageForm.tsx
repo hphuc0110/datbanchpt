@@ -3,6 +3,11 @@
 import { FormEvent, useState } from "react";
 import { MapPin, Phone, Shield } from "lucide-react";
 import { createClient, hasSupabaseConfig } from "@/lib/supabase/client";
+import {
+  type BookingFieldErrors,
+  hasBookingErrors,
+  validateBookingForm,
+} from "@/lib/booking-validation";
 import { GUEST_OPTIONS, SITE, TABLE_TYPES } from "@/data/content";
 import { Button } from "@/components/ui/Button";
 
@@ -20,13 +25,45 @@ const initial = {
 export function BookingPageForm() {
   const [form, setForm] = useState(initial);
   const [loading, setLoading] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<BookingFieldErrors>({});
   const [message, setMessage] = useState<{ type: "ok" | "err"; text: string } | null>(
     null,
   );
 
+  const today = new Date().toISOString().split("T")[0];
+
+  const updateField = <K extends keyof typeof initial>(
+    key: K,
+    value: typeof initial[K],
+  ) => {
+    setForm((prev) => ({ ...prev, [key]: value }));
+    if (fieldErrors[key]) {
+      setFieldErrors((prev) => {
+        const next = { ...prev };
+        delete next[key];
+        return next;
+      });
+    }
+    if (message?.type === "err") {
+      setMessage(null);
+    }
+  };
+
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setMessage(null);
+
+    const errors = validateBookingForm(form);
+    if (hasBookingErrors(errors)) {
+      setFieldErrors(errors);
+      setMessage({
+        type: "err",
+        text: "Vui lòng kiểm tra và sửa các thông tin được đánh dấu bên dưới.",
+      });
+      return;
+    }
+
+    setFieldErrors({});
     setLoading(true);
 
     try {
@@ -58,6 +95,7 @@ export function BookingPageForm() {
         text: "Gửi yêu cầu đặt bàn thành công! Chúng tôi sẽ gọi xác nhận sớm.",
       });
       setForm(initial);
+      setFieldErrors({});
     } catch (err) {
       setMessage({
         type: "err",
@@ -72,6 +110,7 @@ export function BookingPageForm() {
     <div className="mx-auto grid max-w-7xl gap-6 px-4 py-12 lg:grid-cols-[1fr_320px] lg:px-8">
       <form
         onSubmit={onSubmit}
+        noValidate
         className="rounded-xl bg-brand-red p-6 text-white shadow-lg md:p-8"
       >
         <h2 className="text-xl font-bold uppercase md:text-2xl">
@@ -83,64 +122,61 @@ export function BookingPageForm() {
         </p>
 
         <div className="mt-6 grid gap-4 md:grid-cols-2">
-          <label className="block text-xs font-semibold uppercase tracking-wide">
-            Họ và tên *
+          <Field label="Họ và tên *" error={fieldErrors.full_name}>
             <input
-              required
               className="form-input mt-2"
               value={form.full_name}
-              onChange={(e) => setForm({ ...form, full_name: e.target.value })}
+              onChange={(e) => updateField("full_name", e.target.value)}
               placeholder="Nguyễn Văn A"
+              aria-invalid={fieldErrors.full_name ? true : undefined}
             />
-          </label>
-          <label className="block text-xs font-semibold uppercase tracking-wide">
-            Số điện thoại *
+          </Field>
+          <Field label="Số điện thoại *" error={fieldErrors.phone}>
             <input
-              required
               className="form-input mt-2"
               value={form.phone}
-              onChange={(e) => setForm({ ...form, phone: e.target.value })}
+              onChange={(e) => updateField("phone", e.target.value)}
               placeholder="09xx xxx xxx"
+              aria-invalid={fieldErrors.phone ? true : undefined}
             />
-          </label>
+          </Field>
         </div>
 
-        <label className="mt-4 block text-xs font-semibold uppercase tracking-wide">
-          Email (Không bắt buộc)
+        <Field
+          className="mt-4"
+          label="Email (Không bắt buộc)"
+          error={fieldErrors.email}
+        >
           <input
             type="email"
             className="form-input mt-2"
             value={form.email}
-            onChange={(e) => setForm({ ...form, email: e.target.value })}
+            onChange={(e) => updateField("email", e.target.value)}
             placeholder="email@example.com"
+            aria-invalid={fieldErrors.email ? true : undefined}
           />
-        </label>
+        </Field>
 
         <div className="mt-4 grid gap-4 md:grid-cols-2">
-          <label className="block text-xs font-semibold uppercase tracking-wide">
-            Ngày *
+          <Field label="Ngày *" error={fieldErrors.booking_date}>
             <input
-              required
               type="date"
+              min={today}
               className="form-input mt-2"
               value={form.booking_date}
-              onChange={(e) =>
-                setForm({ ...form, booking_date: e.target.value })
-              }
+              onChange={(e) => updateField("booking_date", e.target.value)}
+              aria-invalid={fieldErrors.booking_date ? true : undefined}
             />
-          </label>
-          <label className="block text-xs font-semibold uppercase tracking-wide">
-            Giờ *
+          </Field>
+          <Field label="Giờ *" error={fieldErrors.booking_time}>
             <input
-              required
               type="time"
               className="form-input mt-2"
               value={form.booking_time}
-              onChange={(e) =>
-                setForm({ ...form, booking_time: e.target.value })
-              }
+              onChange={(e) => updateField("booking_time", e.target.value)}
+              aria-invalid={fieldErrors.booking_time ? true : undefined}
             />
-          </label>
+          </Field>
         </div>
 
         <div className="mt-6">
@@ -154,7 +190,7 @@ export function BookingPageForm() {
                 <button
                   key={opt}
                   type="button"
-                  onClick={() => setForm({ ...form, guest_count: opt })}
+                  onClick={() => updateField("guest_count", opt)}
                   className={`rounded-md border px-3 py-3 text-sm font-medium transition-colors ${
                     selected
                       ? "border-brand-gold bg-brand-gold text-brand-red"
@@ -179,9 +215,7 @@ export function BookingPageForm() {
                 <button
                   key={type.id}
                   type="button"
-                  onClick={() =>
-                    setForm({ ...form, preferred_area: type.label })
-                  }
+                  onClick={() => updateField("preferred_area", type.label)}
                   className={`flex w-full items-start gap-3 rounded-lg border bg-white p-4 text-left transition-colors ${
                     selected
                       ? "border-brand-red"
@@ -211,18 +245,18 @@ export function BookingPageForm() {
           </div>
         </div>
 
-        <label className="mt-6 block text-xs font-semibold uppercase tracking-wide">
-          Ghi chú (Không bắt buộc)
+        <Field
+          className="mt-6"
+          label="Ghi chú (Không bắt buộc)"
+        >
           <textarea
             className="form-input mt-2 resize-none"
             rows={4}
             value={form.special_requests}
-            onChange={(e) =>
-              setForm({ ...form, special_requests: e.target.value })
-            }
+            onChange={(e) => updateField("special_requests", e.target.value)}
             placeholder="Yêu cầu đặc biệt..."
           />
-        </label>
+        </Field>
 
         {message && (
           <p
@@ -273,5 +307,29 @@ export function BookingPageForm() {
         </div>
       </aside>
     </div>
+  );
+}
+
+function Field({
+  label,
+  children,
+  error,
+  className,
+}: {
+  label: string;
+  children: React.ReactNode;
+  error?: string;
+  className?: string;
+}) {
+  return (
+    <label className={`block text-xs font-semibold uppercase tracking-wide ${className ?? ""}`}>
+      {label}
+      {children}
+      {error && (
+        <span className="mt-1 block text-xs font-normal normal-case text-yellow-200">
+          {error}
+        </span>
+      )}
+    </label>
   );
 }

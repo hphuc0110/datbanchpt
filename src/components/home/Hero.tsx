@@ -13,17 +13,15 @@ export function Hero() {
         className="object-cover"
         sizes="100vw"
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/50 to-black/70" />
+      <div className="absolute inset-0 " />
 
-      <div className="relative z-10 mx-auto max-w-4xl px-4 pb-16 pt-28 text-center text-white">
-        <h1 className="font-display text-3xl font-bold uppercase leading-tight tracking-wide sm:text-4xl md:text-5xl lg:text-[3.25rem]">
-          Tinh túy ẩm thực Trung Hoa,
-          <br />
-          hội tụ trong một bàn tiệc
+      <div className="relative z-10 mx-auto max-w-5xl px-4 pb-16 pt-28 text-center text-white">
+        <h1 className="font-display text-xl font-bold uppercase leading-tight tracking-wide text-balance sm:text-4xl md:text-5xl lg:text-[3.25rem] lg:whitespace-nowrap">
+          Tinh túy ẩm thực Trung Hoa,<br /> hội tụ trong một bàn tiệc
         </h1>
         <p className="mx-auto mt-6 max-w-2xl text-sm leading-relaxed text-white/90 sm:text-base">
           Từ nguyên liệu tinh tuyển đến kỹ thuật chế biến chuẩn mực, mỗi món ăn
-          tại Cung Hỷ Phát Tài là một hành trình khám phá hương vị Trung Hoa
+          tại Cung Hỷ Phát Tài là hành trình khám phá hương vị Trung Hoa
           đích thực — sang trọng, ấm áp và đáng nhớ.
         </p>
         <div className="mt-10 flex flex-wrap items-center justify-center gap-4">

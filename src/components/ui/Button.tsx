@@ -17,6 +17,8 @@ const variants: Record<Variant, string> = {
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: Variant;
   href?: string;
+  target?: string;
+  rel?: string;
   children: ReactNode;
   className?: string;
 };
@@ -24,6 +26,8 @@ type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
 export function Button({
   variant = "primary",
   href,
+  target,
+  rel,
   children,
   className = "",
   type = "button",
@@ -32,6 +36,14 @@ export function Button({
   const classes = `inline-flex items-center justify-center px-6 py-3 text-sm font-semibold uppercase tracking-wide transition-colors duration-200 disabled:opacity-60 disabled:cursor-not-allowed ${variants[variant]} ${className}`;
 
   if (href) {
+    if (target) {
+      return (
+        <a href={href} target={target} rel={rel} className={classes}>
+          {children}
+        </a>
+      );
+    }
+
     return (
       <Link href={href} className={classes}>
         {children}

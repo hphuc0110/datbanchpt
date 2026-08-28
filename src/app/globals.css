@@ -26,8 +26,8 @@
   --color-brand-charcoal: var(--brand-charcoal);
   --color-brand-dark: var(--brand-dark);
   --color-brand-muted: var(--brand-muted);
-  --font-sans: var(--font-montserrat);
-  --font-display: var(--font-playfair);
+  --font-sans: var(--font-be-vietnam-pro);
+  --font-display: var(--font-goldener);
 }
 
 * {
@@ -41,7 +41,16 @@ html {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-montserrat), system-ui, sans-serif;
+  font-family: var(--font-be-vietnam-pro), system-ui, sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-goldener), Georgia, "Times New Roman", serif;
 }
 
 ::selection {

@@ -24,18 +24,14 @@ export function Footer() {
     <footer className="bg-brand-red text-white">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 md:grid-cols-3 lg:px-8">
         <div>
-          <div className="mb-4 flex items-center gap-3">
-            <div className="relative h-14 w-14 overflow-hidden rounded-full bg-white">
-              <Image
-                src="/logo.svg"
-                alt={SITE.name}
-                fill
-                className="object-cover p-1"
-              />
-            </div>
-            <span className="text-sm font-bold uppercase tracking-wide">
-              {SITE.nameUpper}
-            </span>
+          <div className="mb-4">
+            <Image
+              src="/logo.png"
+              alt={SITE.name}
+              width={192}
+              height={90}
+              className="h-12 w-auto"
+            />
           </div>
           <p className="max-w-sm text-sm leading-relaxed text-white/85">
             Tinh túy ẩm thực Trung Hoa hội tụ tại Cung Hỷ Phát Tài — nơi hương

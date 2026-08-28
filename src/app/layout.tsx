@@ -1,17 +1,19 @@
 import type { Metadata } from "next";
-import { Montserrat, Playfair_Display } from "next/font/google";
+import { Be_Vietnam_Pro } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
-const montserrat = Montserrat({
-  variable: "--font-montserrat",
+const beVietnamPro = Be_Vietnam_Pro({
+  variable: "--font-be-vietnam-pro",
   subsets: ["latin", "vietnamese"],
   weight: ["400", "500", "600", "700"],
 });
 
-const playfair = Playfair_Display({
-  variable: "--font-playfair",
-  subsets: ["latin"],
-  weight: ["600", "700"],
+const goldener = localFont({
+  src: "./fonts/1FTV-VIP-Goldener.ttf",
+  variable: "--font-goldener",
+  display: "swap",
+  weight: "400",
 });
 
 export const metadata: Metadata = {
@@ -21,6 +23,11 @@ export const metadata: Metadata = {
   },
   description:
     "Tinh túy ẩm thực Trung Hoa hội tụ tại Cung Hỷ Phát Tài — đặt bàn, thực đơn signature và điểm tâm sáng.",
+  icons: {
+    icon: "/logo1.svg",
+    shortcut: "/logo1.svg",
+    apple: "/logo1.svg",
+  },
 };
 
 export default function RootLayout({
@@ -29,8 +36,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="vi" className={`${montserrat.variable} ${playfair.variable} h-full`}>
-      <body className="min-h-full flex flex-col antialiased font-sans">
+    <html lang="vi" className={`${beVietnamPro.variable} ${goldener.variable} h-full`}>
+      <body className={`${beVietnamPro.className} min-h-full flex flex-col antialiased font-sans`}>
         {children}
       </body>
     </html>

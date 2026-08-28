@@ -45,9 +45,14 @@ export default function AdminLoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-brand-charcoal px-4">
       <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
         <div className="mb-6 flex flex-col items-center text-center">
-          <div className="relative mb-3 h-16 w-16 overflow-hidden rounded-full border">
-            <Image src="/logo.svg" alt={SITE.name} fill className="object-cover p-1" />
-          </div>
+          <Image
+            src="/logo.png"
+            alt={SITE.name}
+            width={192}
+            height={90}
+            className="mb-4 h-12 w-auto"
+            priority
+          />
           <h1 className="text-xl font-bold text-brand-charcoal">Admin Login</h1>
           <p className="mt-1 text-sm text-brand-muted">{SITE.name}</p>
         </div>

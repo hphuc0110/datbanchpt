@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/Button";
-import { IMAGES } from "@/data/content";
+import { IMAGES, MENUS } from "@/data/content";
 
 export function MenuNavSection() {
   return (
@@ -12,7 +12,7 @@ export function MenuNavSection() {
         className="object-cover"
         sizes="100vw"
       />
-      <div className="absolute inset-0 bg-black/65" />
+      <div className="absolute" />
 
       <div className="relative z-10 mx-auto max-w-4xl px-4 text-center text-white">
         <h2 className="font-display text-3xl font-bold uppercase tracking-wide md:text-4xl lg:text-5xl">
@@ -24,9 +24,28 @@ export function MenuNavSection() {
           trọn vẹn cho mọi dịp.
         </p>
         <div className="mt-10 flex flex-wrap items-center justify-center gap-3 md:gap-4">
-          <Button href="/menu#mon-chinh">Xem Menu Món chính</Button>
-          <Button href="/menu#dimsum">Xem Menu Dimsum</Button>
-          <Button href="/menu#signature">Xem Menu Signature</Button>
+          <Button
+            href={MENUS.tong}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Xem Menu Tổng
+          </Button>
+
+          <Button
+            href={MENUS.dimsum}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Xem Menu Dimsum
+          </Button>
+          <Button
+            href={MENUS.signature}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Xem Menu Signature
+          </Button>
         </div>
       </div>
     </section>

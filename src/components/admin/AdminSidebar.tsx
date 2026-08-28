@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -10,6 +11,7 @@ import {
   UtensilsCrossed,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { SITE } from "@/data/content";
 
 const links = [
   { href: "/admin", label: "Tổng quan", icon: LayoutDashboard },
@@ -36,8 +38,16 @@ export function AdminSidebar() {
   return (
     <aside className="flex w-64 shrink-0 flex-col bg-brand-charcoal text-white">
       <div className="border-b border-white/10 px-5 py-6">
-        <p className="text-xs uppercase tracking-widest text-white/60">Admin</p>
-        <h1 className="mt-1 text-lg font-bold">Cung Hỷ Phát Tài</h1>
+        <Image
+          src="/logo.png"
+          alt={SITE.name}
+          width={192}
+          height={90}
+          className="h-10 w-auto"
+        />
+        <p className="mt-3 text-xs uppercase tracking-widest text-white/60">
+          Admin
+        </p>
       </div>
       <nav className="flex-1 space-y-1 p-3">
         {links.map(({ href, label, icon: Icon }) => {

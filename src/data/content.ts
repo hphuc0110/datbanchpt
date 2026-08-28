@@ -1,7 +1,7 @@
 export const SITE = {
   name: "Cung Hỷ Phát Tài",
   nameUpper: "CUNG HỶ PHÁT TÀI",
-  phone: "+123 456 789",
+  phone: "+84 915 885 888",
   hotline: "0915 885 888",
   address: "47-51 Cửa Bắc, Ba Đình, Hà Nội",
   addressFull: "47-51 Cửa Bắc, Ba Đình, Hà Nội",
@@ -24,34 +24,40 @@ export const NAV_LINKS: {
   { href: "/lien-he", label: "Liên hệ" },
 ];
 
+export const MENUS = {
+  dimsum: "/Dimsum.pdf",
+  tong: "/Menu-Tổng.pdf",
+  signature: "/Menu-Signature.pdf",
+} as const;
+
+export const MENU_DROPDOWN = [
+  { label: "Menu tổng", href: MENUS.tong },
+  { label: "Dimsum", href: MENUS.dimsum },
+  { label: "Menu Signature", href: MENUS.signature },
+] as const;
+
 export const IMAGES = {
-  hero: "https://images.unsplash.com/photo-1552566626-52f8b828add9?w=1920&q=80",
-  dining: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200&q=80",
-  chef: "https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=800&q=80",
+  logo: "/logo.png",
+  hero: "/hero.png",
+  dining: "/banan.png",
+  chef: "/manh.png",
   signatureMain:
-    "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=1200&q=80",
+    "/cua.png",
   signature1:
-    "https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=600&q=80",
+    "/chao.png",
   signature2:
-    "https://images.unsplash.com/photo-1512058564366-18510be2db19?w=600&q=80",
+    "/vit.png",
   signature3:
-    "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=600&q=80",
+    "/ga.png",
   menuBg:
-    "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1920&q=80",
+    "/back_1.png",
   morning:
-    "https://images.unsplash.com/photo-1496116218417-1a781b1c416c?w=1920&q=80",
+    "/back3.png",
   exterior:
-    "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=1920&q=80",
-  gallery: [
-    "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&q=80",
-    "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=600&q=80",
-    "https://images.unsplash.com/photo-1466978913421-dad2cdb01ffa?w=600&q=80",
-    "https://images.unsplash.com/photo-1424847651672-bf20a4b0982b?w=600&q=80",
-    "https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?w=600&q=80",
-    "https://images.unsplash.com/photo-1592861956120-e524fc739696?w=600&q=80",
-  ],
+    "/back5.png",
+  galleryFrame: "/gallery-frame.png",
   bookingBg:
-    "https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=1920&q=80",
+    "/back6.png",
 } as const;
 
 export const SIGNATURE_DISHES = [

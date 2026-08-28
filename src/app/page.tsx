@@ -22,7 +22,7 @@ export default function HomePage() {
       />
       <InfoSection
         overline="Triết Lý Ẩm Thực"
-        title="Tinh hoa không nằm ở sự cầu kỳ Tinh hoa nằm ở cách làm"
+        title={"Tinh hoa không nằm ở sự cầu kỳ\nTinh hoa nằm ở cách làm"}
         description="Chúng tôi tin rằng nguyên liệu tốt và kỹ thuật chuẩn mực quan trọng hơn sự phô trương. Mỗi món ăn được chăm chút từ khâu chọn lựa đến hoàn thiện trên bàn tiệc."
         imageSrc={IMAGES.chef}
         imageAlt="Bếp trưởng Lê Đình Mạnh"

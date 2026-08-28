@@ -3,7 +3,7 @@ import Image from "next/image";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { Button } from "@/components/ui/Button";
 import { SectionLabel } from "@/components/ui/SectionLabel";
-import { SIGNATURE_DISHES, IMAGES } from "@/data/content";
+import { SIGNATURE_DISHES, IMAGES, MENUS } from "@/data/content";
 
 export const metadata: Metadata = {
   title: "Thực đơn",
@@ -95,7 +95,7 @@ export default function MenuPage() {
           className="object-cover"
           priority
         />
-        <div className="absolute inset-0 bg-black/65" />
+        <div className="" />
         <div className="relative z-10 px-4">
           <SectionLabel light>Thực đơn</SectionLabel>
           <h1 className="mt-4 text-3xl font-bold uppercase md:text-5xl">
@@ -105,9 +105,27 @@ export default function MenuPage() {
             Khám phá các bộ menu Signature, món chính, dimsum và điểm tâm sáng.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
+            <Button
+              href={MENUS.tong}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Menu tổng
+            </Button>
             <Button href="#mon-chinh">Món chính</Button>
-            <Button href="#dimsum">Dimsum</Button>
-            <Button href="#signature" variant="cream">
+            <Button
+              href={MENUS.dimsum}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Dimsum
+            </Button>
+            <Button
+              href={MENUS.signature}
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="cream"
+            >
               Signature
             </Button>
           </div>
