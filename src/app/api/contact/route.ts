@@ -14,20 +14,16 @@ export async function POST(request: Request) {
   }
 
   const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("contact_messages")
-    .insert({
-      full_name: body.full_name,
-      contact: body.contact,
-      subject: body.subject || "Câu hỏi / Góp ý chung",
-      message: body.message,
-    })
-    .select()
-    .single();
+  const { error } = await supabase.from("contact_messages").insert({
+    full_name: body.full_name,
+    contact: body.contact,
+    subject: body.subject || "Câu hỏi / Góp ý chung",
+    message: body.message,
+  });
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({ data }, { status: 201 });
+  return NextResponse.json({ ok: true }, { status: 201 });
 }

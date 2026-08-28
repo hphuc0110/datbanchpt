@@ -44,24 +44,20 @@ export async function POST(request: Request) {
   }
 
   const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("bookings")
-    .insert({
-      full_name: body.full_name,
-      phone: body.phone,
-      email: body.email || null,
-      booking_date: body.booking_date,
-      booking_time: body.booking_time,
-      guest_count: body.guest_count,
-      preferred_area: body.preferred_area || "Bàn thường",
-      special_requests: body.special_requests || null,
-    })
-    .select()
-    .single();
+  const { error } = await supabase.from("bookings").insert({
+    full_name: body.full_name,
+    phone: body.phone,
+    email: body.email || null,
+    booking_date: body.booking_date,
+    booking_time: body.booking_time,
+    guest_count: body.guest_count,
+    preferred_area: body.preferred_area || "Bàn thường",
+    special_requests: body.special_requests || null,
+  });
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({ data }, { status: 201 });
+  return NextResponse.json({ ok: true }, { status: 201 });
 }
