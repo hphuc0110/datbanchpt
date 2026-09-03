@@ -4,7 +4,11 @@ import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { Trash2 } from "lucide-react";
 import { createClient, hasSupabaseConfig } from "@/lib/supabase/client";
-import type { Booking, BookingStatus } from "@/lib/supabase/types";
+import type {
+  Booking,
+  BookingStatus,
+  PancakeSyncStatus,
+} from "@/lib/supabase/types";
 
 const STATUS_LABEL: Record<BookingStatus, string> = {
   pending: "Chờ xác nhận",
@@ -20,6 +24,13 @@ const STATUS_COLOR: Record<BookingStatus, string> = {
   completed: "bg-slate-100 text-slate-700",
 };
 
+const PANCAKE_LABEL: Record<PancakeSyncStatus, string> = {
+  pending: "Chờ sync",
+  synced: "Đã lên POS",
+  failed: "Lỗi POS",
+  skipped: "Chưa cấu hình",
+};
+
 const DEMO_BOOKINGS: Booking[] = [
   {
     id: "demo-1",
@@ -32,6 +43,11 @@ const DEMO_BOOKINGS: Booking[] = [
     preferred_area: "Bàn thường (Đại Sảnh)",
     special_requests: "Sinh nhật",
     status: "pending",
+    pancake_order_id: null,
+    pancake_system_id: null,
+    pancake_sync_status: "skipped",
+    pancake_sync_error: null,
+    pancake_synced_at: null,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   },
@@ -46,6 +62,11 @@ const DEMO_BOOKINGS: Booking[] = [
     preferred_area: "Phòng riêng (VIP Room)",
     special_requests: null,
     status: "confirmed",
+    pancake_order_id: 12345,
+    pancake_system_id: 1,
+    pancake_sync_status: "synced",
+    pancake_sync_error: null,
+    pancake_synced_at: new Date().toISOString(),
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   },
@@ -90,16 +111,19 @@ export function BookingsTable() {
       prev.map((b) => (b.id === id ? { ...b, status } : b)),
     );
     if (demo || !hasSupabaseConfig()) return;
-    const supabase = createClient();
-    await supabase.from("bookings").update({ status }).eq("id", id);
+    // Go through API so Pancake order status stays in sync
+    await fetch(`/api/bookings/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status }),
+    });
   };
 
   const remove = async (id: string) => {
     if (!confirm("Xóa đơn đặt bàn này?")) return;
     setBookings((prev) => prev.filter((b) => b.id !== id));
     if (demo || !hasSupabaseConfig()) return;
-    const supabase = createClient();
-    await supabase.from("bookings").delete().eq("id", id);
+    await fetch(`/api/bookings/${id}`, { method: "DELETE" });
   };
 
   const filtered =
@@ -141,19 +165,20 @@ export function BookingsTable() {
               <th className="px-4 py-3">Số khách</th>
               <th className="px-4 py-3">Khu vực</th>
               <th className="px-4 py-3">Trạng thái</th>
+              <th className="px-4 py-3">Pancake</th>
               <th className="px-4 py-3">Thao tác</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={7} className="px-4 py-8 text-center text-brand-muted">
+                <td colSpan={8} className="px-4 py-8 text-center text-brand-muted">
                   Đang tải...
                 </td>
               </tr>
             ) : filtered.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-4 py-8 text-center text-brand-muted">
+                <td colSpan={8} className="px-4 py-8 text-center text-brand-muted">
                   Chưa có đơn đặt bàn.
                 </td>
               </tr>
@@ -199,6 +224,25 @@ export function BookingsTable() {
                         ),
                       )}
                     </select>
+                  </td>
+                  <td className="px-4 py-3">
+                    <p
+                      className={`text-xs font-medium ${
+                        b.pancake_sync_status === "synced"
+                          ? "text-green-700"
+                          : b.pancake_sync_status === "failed"
+                            ? "text-red-700"
+                            : "text-brand-muted"
+                      }`}
+                      title={b.pancake_sync_error ?? undefined}
+                    >
+                      {PANCAKE_LABEL[b.pancake_sync_status ?? "skipped"]}
+                    </p>
+                    {b.pancake_order_id != null && (
+                      <p className="text-[10px] text-brand-muted">
+                        #{b.pancake_order_id}
+                      </p>
+                    )}
                   </td>
                   <td className="px-4 py-3">
                     <button

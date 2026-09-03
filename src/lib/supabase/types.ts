@@ -1,5 +1,7 @@
 export type BookingStatus = "pending" | "confirmed" | "cancelled" | "completed";
 
+export type PancakeSyncStatus = "pending" | "synced" | "failed" | "skipped";
+
 export type Booking = {
   id: string;
   full_name: string;
@@ -11,6 +13,11 @@ export type Booking = {
   preferred_area: string | null;
   special_requests: string | null;
   status: BookingStatus;
+  pancake_order_id: number | null;
+  pancake_system_id: number | null;
+  pancake_sync_status: PancakeSyncStatus;
+  pancake_sync_error: string | null;
+  pancake_synced_at: string | null;
   created_at: string;
   updated_at: string;
 };
