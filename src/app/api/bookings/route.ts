@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { hasSupabaseConfig } from "@/lib/supabase/config";
@@ -27,17 +28,25 @@ export async function GET() {
   return NextResponse.json({ data });
 }
 
-async function updatePancakeFields(
+async function markPancakeSync(
   supabase: Awaited<ReturnType<typeof createClient>>,
   bookingId: string,
-  fields: Record<string, unknown>,
+  args: {
+    orderId?: number | null;
+    systemId?: number | null;
+    status: "pending" | "synced" | "failed" | "skipped";
+    error?: string | null;
+  },
 ) {
-  const { error } = await supabase
-    .from("bookings")
-    .update(fields)
-    .eq("id", bookingId);
+  const { error } = await supabase.rpc("set_booking_pancake_sync", {
+    p_booking_id: bookingId,
+    p_order_id: args.orderId ?? null,
+    p_system_id: args.systemId ?? null,
+    p_sync_status: args.status,
+    p_sync_error: args.error ?? null,
+  });
   if (error) {
-    console.error("[pancake] update booking fields failed", bookingId, error.message);
+    console.error("[pancake] rpc sync update failed", bookingId, error.message);
   }
 }
 
@@ -62,28 +71,25 @@ export async function POST(request: Request) {
 
   const supabase = await createClient();
 
-  // Insert only core booking fields so deploy works even if PostgREST schema
-  // cache is briefly stale after migration (pancake_* has DB defaults).
-  const { data: booking, error } = await supabase
-    .from("bookings")
-    .insert({
-      full_name: body.full_name,
-      phone: body.phone,
-      email: body.email || null,
-      booking_date: body.booking_date,
-      booking_time: body.booking_time,
-      guest_count: body.guest_count,
-      preferred_area: body.preferred_area || "Bàn thường",
-      special_requests: body.special_requests || null,
-    })
-    .select("*")
-    .single();
+  // Pre-generate id and skip .select() — anon can INSERT but cannot SELECT
+  // (RLS), so insert().select() fails with "violates row-level security".
+  const bookingId = randomUUID();
+  const bookingRow = {
+    id: bookingId,
+    full_name: body.full_name as string,
+    phone: body.phone as string,
+    email: (body.email as string) || null,
+    booking_date: body.booking_date as string,
+    booking_time: body.booking_time as string,
+    guest_count: body.guest_count as string,
+    preferred_area: (body.preferred_area as string) || "Bàn thường",
+    special_requests: (body.special_requests as string) || null,
+  };
 
-  if (error || !booking) {
-    return NextResponse.json(
-      { error: error?.message ?? "Không tạo được đặt bàn" },
-      { status: 500 },
-    );
+  const { error } = await supabase.from("bookings").insert(bookingRow);
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
   let pancake: {
@@ -92,37 +98,35 @@ export async function POST(request: Request) {
     error?: string;
   } = { synced: false };
 
+  const bookingForSync = bookingRow as Booking;
+
   if (hasPancakeConfig()) {
-    const sync = await createPancakeOrderFromBooking(booking as Booking);
+    const sync = await createPancakeOrderFromBooking(bookingForSync);
     if (sync.ok) {
       pancake = { synced: true, order_id: sync.orderId };
-      await updatePancakeFields(supabase, booking.id, {
-        pancake_order_id: sync.orderId,
-        pancake_system_id: sync.systemId ?? null,
-        pancake_sync_status: "synced",
-        pancake_sync_error: null,
-        pancake_synced_at: new Date().toISOString(),
+      await markPancakeSync(supabase, bookingId, {
+        orderId: sync.orderId,
+        systemId: sync.systemId ?? null,
+        status: "synced",
+        error: null,
       });
     } else {
       pancake = { synced: false, error: sync.error };
-      await updatePancakeFields(supabase, booking.id, {
-        pancake_sync_status: "failed",
-        pancake_sync_error: sync.error.slice(0, 1000),
-        pancake_synced_at: new Date().toISOString(),
+      await markPancakeSync(supabase, bookingId, {
+        status: "failed",
+        error: sync.error.slice(0, 1000),
       });
-      console.error("[pancake] sync booking failed", booking.id, sync.error);
+      console.error("[pancake] sync booking failed", bookingId, sync.error);
     }
   } else {
     pancake = { synced: false, error: "Pancake chưa cấu hình trên Vercel" };
-    await updatePancakeFields(supabase, booking.id, {
-      pancake_sync_status: "skipped",
-    });
+    await markPancakeSync(supabase, bookingId, { status: "skipped" });
   }
 
   return NextResponse.json(
     {
       ok: true,
-      data: { id: booking.id },
+      data: { id: bookingId },
       pancake,
     },
     { status: 201 },
