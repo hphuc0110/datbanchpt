@@ -16,7 +16,7 @@ const initial = {
   email: "",
   booking_date: "",
   booking_time: "",
-  guest_count: GUEST_OPTIONS[1] as string,
+  guest_count: "",
   preferred_area: TABLE_TYPES[0].label as string,
   special_requests: "",
 };
@@ -99,7 +99,7 @@ export function BookingPageForm() {
         noValidate
         className="rounded-xl bg-brand-red p-6 text-white shadow-lg md:p-8"
       >
-        <h2 className="text-xl font-bold uppercase md:text-2xl">
+        <h2 className="text-xl font-normal uppercase md:text-2xl">
           Thông tin đặt bàn
         </h2>
         <p className="mt-2 text-sm text-white/85">
@@ -188,6 +188,11 @@ export function BookingPageForm() {
               );
             })}
           </div>
+          {fieldErrors.guest_count && (
+            <p className="mt-2 text-xs text-yellow-200">
+              {fieldErrors.guest_count}
+            </p>
+          )}
         </div>
 
         <div className="mt-6">
@@ -267,7 +272,7 @@ export function BookingPageForm() {
 
       <aside className="space-y-4">
         <div className="rounded-xl bg-brand-red p-5 text-white">
-          <h3 className="font-bold uppercase">{SITE.nameUpper}</h3>
+          <h3 className="font-normal uppercase">{SITE.nameUpper}</h3>
           <p className="mt-3 flex items-start gap-2 text-sm">
             <MapPin className="mt-0.5 h-4 w-4 shrink-0" />
             {SITE.addressFull}
@@ -287,7 +292,6 @@ export function BookingPageForm() {
           <h3 className="font-bold uppercase">Chính sách giữ bàn</h3>
           <ul className="mt-3 list-disc space-y-2 pl-4 text-sm">
             <li>Giữ bàn 15 phút kể từ giờ đặt.</li>
-            <li>Chi tiêu trung bình khoảng 500k – 1M VND/người.</li>
             <li>Phòng VIP nên đặt trước tối thiểu 1 ngày.</li>
           </ul>
         </div>

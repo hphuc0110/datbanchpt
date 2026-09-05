@@ -98,6 +98,10 @@ export function validateBookingForm(form: BookingFormData): BookingFieldErrors {
     }
   }
 
+  if (!form.guest_count.trim()) {
+    errors.guest_count = "Vui lòng chọn số khách.";
+  }
+
   return errors;
 }
 

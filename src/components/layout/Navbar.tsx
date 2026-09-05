@@ -74,9 +74,9 @@ export function Navbar({ variant = "overlay" }: Props) {
                     onClick={() => setMenuOpen((v) => !v)}
                     aria-expanded={menuOpen}
                     aria-haspopup="true"
-                    className={navLinkClass(menuOpen)}
+                    className={navLinkClass(menuOpen || active)}
                   >
-                    {menuOpen && (
+                    {(menuOpen || active) && (
                       <span
                         className="h-1.5 w-1.5 shrink-0 rounded-full bg-brand-red"
                         aria-hidden
@@ -109,9 +109,9 @@ export function Navbar({ variant = "overlay" }: Props) {
               <Link
                 key={link.href}
                 href={link.href}
-                className={navLinkClass(active)}
+                className={navLinkClass(active && !menuOpen)}
               >
-                {active && (
+                {active && !menuOpen && (
                   <span
                     className="h-1.5 w-1.5 shrink-0 rounded-full bg-brand-red"
                     aria-hidden
