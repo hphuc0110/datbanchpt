@@ -20,7 +20,8 @@ export const NAV_LINKS: {
 }[] = [
   { href: "/", label: "Trang chủ" },
   { href: "/menu", label: "Menu", hasDropdown: true },
-  { href: "/dat-ban", label: "Đặt bàn" },
+  { href: "/cua-long", label: "Cua lông" },
+  { href: "/tin-tuc", label: "Tin tức" },
   { href: "/lien-he", label: "Liên hệ" },
 ];
 

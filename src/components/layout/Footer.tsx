@@ -52,6 +52,12 @@ export function Footer() {
             <Link href="/menu" className="hover:underline">
               Menu
             </Link>
+            <Link href="/cua-long" className="hover:underline">
+              Cua lông
+            </Link>
+            <Link href="/tin-tuc" className="hover:underline">
+              Tin tức
+            </Link>
             <Link href="/lien-he" className="hover:underline">
               Liên hệ
             </Link>
