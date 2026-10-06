@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function DatBanPage() {
   return (
-    <SiteLayout navVariant="light">
+    <SiteLayout navVariant="solid">
       <section className="bg-brand-dark pt-28 pb-12 text-center text-white">
         <p className="text-xs uppercase tracking-[0.2em] text-white/70">
           Phục vụ chu đáo & đẳng cấp
